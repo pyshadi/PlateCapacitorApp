@@ -26,7 +26,7 @@ def dc_discharging_plot(capacitance, resistance, initial_voltage, plot_type):
     else:
         raise ValueError(f'Unknown plot type: {plot_type}')
 
-    plot = figure(title='DC Discharging', x_axis_label='Time (s)', y_axis_label=y_label, plot_width=1200, plot_height=790)
+    plot = figure(title='DC Discharging', x_axis_label='Time (s)', y_axis_label=y_label, plot_width=1200, plot_height=615)
     line = plot.line(t, y, legend_label='DC Discharging', line_width=2)
 
     # Add hover tool to display values
@@ -53,7 +53,7 @@ def dc_charging_plot(capacitance, resistance, initial_voltage, plot_type):
         raise ValueError(f'Unknown plot type: {plot_type}')
 
     # Create the plot
-    plot = figure(title='DC Charging', x_axis_label='Time', y_axis_label=y_label, plot_width=1200, plot_height=790)
+    plot = figure(title='DC Charging', x_axis_label='Time', y_axis_label=y_label, plot_width=1200, plot_height=615)
     line = plot.line(x, y, legend_label='DC Charging', line_width=2)
 
     # Add hover tool to display values

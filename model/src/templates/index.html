@@ -20,7 +20,7 @@
 
     form {
         width: 100%;
-        max-width: 500px;
+        max-width: 400px; /* Adjust the max-width as needed */
         background-color: white;
         padding: 20px;
         border-radius: 8px;
@@ -35,8 +35,8 @@
     input[type="text"],
     select {
         width: 100%;
-        padding: 10px;
-        margin-bottom: 20px;
+        padding: 8px;
+        margin-bottom: 10px;
         border-radius: 4px;
         border: 1px solid #ccc;
     }
@@ -55,6 +55,11 @@
         background-color: #0056b3;
     }
 
+    .plot-container {
+        max-width: 800px; /* Adjust the max-width as needed */
+        margin-top: 20px;
+    }
+
     @media screen and (min-width: 768px) {
         /* Apply responsive styles for screens wider than 768px */
         .container {
@@ -65,14 +70,16 @@
         }
 
         form {
-            flex: 1;
+            max-width: 300px; /* Adjust the max-width as needed */
         }
 
-        #bk_root {
+        .plot-container {
+            max-width: none;
             flex: 2;
+            margin-top: 0;
         }
     }
-</style>
+    </style>
 
     <!-- Include BokehJS from CDN -->
     <script src="https://cdn.bokeh.org/bokeh/release/bokeh-2.4.2.min.js"></script>
@@ -107,49 +114,50 @@
 <body>
     <div class="container">
 
-<form method="POST">
-    <label for="area">Area [m]:</label><br>
-    <input type="text" name="area" value="{{ form_values.area }}" placeholder="Area">
-    <label for="separation">Separation [m]</label><br>
-    <input type="text" name="separation" value="{{ form_values.separation }}" placeholder="Separation"><br>
+        <form method="POST">
+            <label for="area">Area [m]:</label>
+            <input type="text" name="area" value="{{ form_values.area }}" placeholder="Area">
 
-    <label for="permittivity">Permittivity [F/m]:</label><br>
-    <input type="text" name="permittivity" value="{{ form_values.permittivity }}" placeholder="Permittivity"><br>
-    <br>
-    <span id="capacitance">{{ capacitance_output }}</span><br><br>
+            <label for="separation">Separation [m]:</label>
+            <input type="text" name="separation" value="{{ form_values.separation }}" placeholder="Separation">
 
-    <br><br>
+            <label for="permittivity">Permittivity [F/m]:</label>
+            <input type="text" name="permittivity" value="{{ form_values.permittivity }}" placeholder="Permittivity">
 
-    <label for="simulation_type">Simulation Type:</label><br>
-    <select id="simulation_type" name="simulation_type">
-        <option value="DC Charging" {% if form_values.simulation_type == 'DC Charging' %} selected {% endif %}>DC Charging</option>
-        <option value="DC Discharging" {% if form_values.simulation_type == 'DC Discharging' %} selected {% endif %}>DC Discharging</option>
-    </select><br><br>
-    <label for="plot_type">Plot Type:</label><br>
-    <select id="plot_type" name="plot_type">
-        <option value="Current/Time" {% if form_values.plot_type == 'Current/Time' %} selected {% endif %}>Current/Time</option>
-        <option value="Voltage/Time" {% if form_values.plot_type == 'Voltage/Time' %} selected {% endif %}>Voltage/Time</option>
-        <option value="Charge/Time" {% if form_values.plot_type == 'Charge/Time' %} selected {% endif %}>Charge/Time</option>
-    </select><br><br>
+            <span id="capacitance">{{ capacitance_output }}</span>
+            <br><br><br>
 
-    <label for="resistance">Resistance:</label><br>
-    <input type="text" id="resistance" name="resistance" value="{{ form_values.resistance }}"><br>
-    <label for="initial_voltage">Initial Voltage:</label><br>
-    <input type="text" id="initial_voltage" name="initial_voltage" value="{{ form_values.initial_voltage }}"><br>
+            <label for="simulation_type">Simulation Type:</label>
+            <select id="simulation_type" name="simulation_type">
+                <option value="DC Charging" {% if form_values.simulation_type == 'DC Charging' %} selected {% endif %}>DC Charging</option>
+                <option value="DC Discharging" {% if form_values.simulation_type == 'DC Discharging' %} selected {% endif %}>DC Discharging</option>
+            </select>
 
-    <br>
+            <label for="plot_type">Plot Type:</label>
+            <select id="plot_type" name="plot_type">
+                <option value="Current/Time" {% if form_values.plot_type == 'Current/Time' %} selected {% endif %}>Current/Time</option>
+                <option value="Voltage/Time" {% if form_values.plot_type == 'Voltage/Time' %} selected {% endif %}>Voltage/Time</option>
+                <option value="Charge/Time" {% if form_values.plot_type == 'Charge/Time' %} selected {% endif %}>Charge/Time</option>
+            </select>
 
-    <input type="submit" value="Submit">
-</form>
+            <label for="resistance">Resistance:</label>
+            <input type="text" id="resistance" name="resistance" value="{{ form_values.resistance }}">
 
+            <label for="initial_voltage">Initial Voltage:</label>
+            <input type="text" id="initial_voltage" name="initial_voltage" value="{{ form_values.initial_voltage }}"><br><br>
 
+            <input type="submit" value="Submit">
 
-<div id="bk_root">
-    {% if plot_script and plot_div %}
-        {{ plot_script|safe }}
-        {{ plot_div|safe }}
-    {% endif %}
-</div>
+        </form>
+
+        <div class="plot-container">
+            {% if plot_script and plot_div %}
+                {{ plot_script|safe }}
+                {{ plot_div|safe }}
+            {% endif %}
         </div>
+
+
+    </div>
 </body>
 </html>
