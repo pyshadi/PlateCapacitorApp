@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Capacitor Simulation</title>
+</head>
+<body>
+    <form method="POST">
+        <label for="area">Area:</label><br>
+        <input type="text" id="area" name="area"><br>
+        <label for="separation">Separation:</label><br>
+        <input type="text" id="separation" name="separation"><br>
+        <label for="permittivity">Permittivity:</label><br>
+        <input type="text" id="permittivity" name="permittivity"><br>
+        <br><br>
+        <label for="resistance">Resistance:</label><br>
+        <input type="text" id="resistance" name="resistance"><br>
+        <label for="initial_voltage">Initial Voltage:</label><br>
+        <input type="text" id="initial_voltage" name="initial_voltage"><br>
+
+        <br>
+        <label for="simulation_type">Simulation Type:</label><br>
+        <select id="simulation_type" name="simulation_type">
+            <option value="DC Charging">DC Charging</option>
+            <option value="DC Discharging">DC Discharging</option>
+            <option value="Impulse Response">Impulse Response</option>
+        </select><br><br>
+        <input type="submit" value="Submit">
+    </form>
+    {% if plot_script and plot_div %}
+        {{ plot_script|safe }}
+        {{ plot_div|safe }}
+    {% endif %}
+</body>
+</html>
