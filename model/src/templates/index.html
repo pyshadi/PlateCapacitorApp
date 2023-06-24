@@ -3,92 +3,143 @@
 <head>
     <title>Capacitor Simulation</title>
 
-        <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f8f9fa;
-        }
+    <style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f8f9fa;
+    }
+
+    .container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 20px;
+    }
+
+    form {
+        width: 100%;
+        max-width: 500px;
+        background-color: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.1);
+    }
+
+    label {
+        display: block;
+        margin-bottom: 5px;
+    }
+
+    input[type="text"],
+    select {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 20px;
+        border-radius: 4px;
+        border: 1px solid #ccc;
+    }
+
+    input[type="submit"] {
+        width: 100%;
+        padding: 10px;
+        border: none;
+        border-radius: 4px;
+        background-color: #007bff;
+        color: white;
+        cursor: pointer;
+    }
+
+    input[type="submit"]:hover {
+        background-color: #0056b3;
+    }
+
+    @media screen and (min-width: 768px) {
+        /* Apply responsive styles for screens wider than 768px */
         .container {
-            display: flex;
+            flex-direction: row;
             justify-content: center;
             align-items: flex-start;
             gap: 20px;
-            padding: 20px;
         }
+
         form {
             flex: 1;
-            background-color: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.1);
         }
+
         #bk_root {
             flex: 2;
+        }
+    }
+</style>
 
-        }
-        label {
-            display: block;
-            margin-bottom: 5px;
-        }
-        input[type="text"], select {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 20px;
-            border-radius: 4px;
-            border: 1px solid #ccc;
-        }
-        input[type="submit"] {
-            width: 100%;
-            padding: 10px;
-            border: none;
-            border-radius: 4px;
-            background-color: #007bff;
-            color: white;
-            cursor: pointer;
-        }
-        input[type="submit"]:hover {
-            background-color: #0056b3;
-        }
-    </style>
 
-        <!-- Include BokehJS from CDN -->
-        <script src="https://cdn.bokeh.org/bokeh/release/bokeh-2.4.2.min.js"></script>
-        <script src="https://cdn.bokeh.org/bokeh/release/bokeh-widgets-2.4.2.min.js"></script>
-        <script src="https://cdn.bokeh.org/bokeh/release/bokeh-tables-2.4.2.min.js"></script>
-        <script src="https://cdn.bokeh.org/bokeh/release/bokeh-api-2.4.2.min.js"></script>
-        <script src="https://cdn.bokeh.org/bokeh/release/bokeh-gl-2.4.2.min.js"></script>
-        <script src="https://cdn.bokeh.org/bokeh/release/bokeh-mathjax-2.4.2.min.js"></script>
+    <!-- Include BokehJS from CDN -->
+    <script src="https://cdn.bokeh.org/bokeh/release/bokeh-2.4.2.min.js"></script>
+    <script src="https://cdn.bokeh.org/bokeh/release/bokeh-widgets-2.4.2.min.js"></script>
+    <script src="https://cdn.bokeh.org/bokeh/release/bokeh-tables-2.4.2.min.js"></script>
+    <script src="https://cdn.bokeh.org/bokeh/release/bokeh-api-2.4.2.min.js"></script>
+    <script src="https://cdn.bokeh.org/bokeh/release/bokeh-gl-2.4.2.min.js"></script>
+    <script src="https://cdn.bokeh.org/bokeh/release/bokeh-mathjax-2.4.2.min.js"></script>
 
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+$(document).ready(function() {
+    $('input[name="area"], input[name="separation"], input[name="permittivity"]').on('change', function() {
+        $.ajax({
+            url: '/update_capacitance',
+            method: 'POST',
+            data: {
+                area: $('input[name="area"]').val(),
+                separation: $('input[name="separation"]').val(),
+                permittivity: $('input[name="permittivity"]').val(),
+            },
+            success: function(response) {
+                $('span#capacitance').text(response['capacitance']);
+            }
+        });
+    });
+});
+</script>
 
 
 </head>
 <body>
     <div class="container">
 
-    <form method="POST">
-        <label for="area">Area:</label><br>
-        <input type="text" id="area" name="area"><br>
-        <label for="separation">Separation:</label><br>
-        <input type="text" id="separation" name="separation"><br>
-        <label for="permittivity">Permittivity:</label><br>
-        <input type="text" id="permittivity" name="permittivity"><br>
-        <br><br>
-        <label for="resistance">Resistance:</label><br>
-        <input type="text" id="resistance" name="resistance"><br>
-        <label for="initial_voltage">Initial Voltage:</label><br>
-        <input type="text" id="initial_voltage" name="initial_voltage"><br>
+<form method="POST">
+    <label for="area">Area [m]:</label><br>
+    <input type="text" name="area" value="{{ form_values.area }}" placeholder="Area">
+    <label for="separation">Separation [m]</label><br>
+    <input type="text" name="separation" value="{{ form_values.separation }}" placeholder="Separation"><br>
 
-        <br>
-        <label for="simulation_type">Simulation Type:</label><br>
-        <select id="simulation_type" name="simulation_type">
-            <option value="DC Charging">DC Charging</option>
-            <option value="DC Discharging">DC Discharging</option>
-            <option value="Impulse Response">Impulse Response</option>
-        </select><br><br>
-        <input type="submit" value="Submit">
-    </form>
+    <label for="permittivity">Permittivity [F/m]:</label><br>
+    <input type="text" name="permittivity" value="{{ form_values.permittivity }}" placeholder="Permittivity"><br>
+    <br>
+    <span id="capacitance">{{ capacitance_output }}</span><br><br>
+
+    <br><br>
+
+    <label for="simulation_type">Simulation Type:</label><br>
+    <select id="simulation_type" name="simulation_type">
+        <option value="DC Charging" {% if form_values.simulation_type == 'DC Charging' %} selected {% endif %}>DC Charging</option>
+        <option value="DC Discharging" {% if form_values.simulation_type == 'DC Discharging' %} selected {% endif %}>DC Discharging</option>
+        <option value="Impulse Response" {% if form_values.simulation_type == 'Impulse Response' %} selected {% endif %}>Impulse Response</option>
+    </select><br><br>
+
+    <label for="resistance">Resistance:</label><br>
+    <input type="text" id="resistance" name="resistance" value="{{ form_values.resistance }}"><br>
+    <label for="initial_voltage">Initial Voltage:</label><br>
+    <input type="text" id="initial_voltage" name="initial_voltage" value="{{ form_values.initial_voltage }}"><br>
+
+    <br>
+
+    <input type="submit" value="Submit">
+</form>
+
+
+
 <div id="bk_root">
     {% if plot_script and plot_div %}
         {{ plot_script|safe }}
