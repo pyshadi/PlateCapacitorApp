@@ -1,4 +1,4 @@
-# Capacitor Simulation
+# Plate Capacitor Simulation
 
 This is a web application that allows you to simulate the behavior of a capacitor in different scenarios. You can visualize the charging and discharging processes of a capacitor and observe how the voltage, current, and charge change over time.
 
