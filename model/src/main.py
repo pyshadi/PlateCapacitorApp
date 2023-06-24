@@ -12,7 +12,7 @@ def dc_discharging_plot(capacitance, resistance, initial_voltage):
     t = np.linspace(0, 5, num=500)  # Time values
     v = initial_voltage * np.exp(-t / (resistance * capacitance))  # Voltage values
 
-    plot = figure(title='DC Discharging', x_axis_label='Time (s)', y_axis_label='Voltage (V)')
+    plot = figure(title='DC Discharging', x_axis_label='Time (s)', y_axis_label='Voltage (V)', plot_width=1200, plot_height=740)
     plot.line(t, v, legend_label='DC Discharging', line_width=2)
 
     return plot
@@ -22,7 +22,7 @@ def impulse_response_plot(capacitance, resistance):
     t = np.linspace(0, 5, num=500)  # Time values
     v = np.exp(-t / (resistance * capacitance))  # Voltage values
 
-    plot = figure(title='Impulse Response', x_axis_label='Time (s)', y_axis_label='Voltage (V)')
+    plot = figure(title='Impulse Response', x_axis_label='Time (s)', y_axis_label='Voltage (V)', plot_width=1200, plot_height=740)
     plot.line(t, v, legend_label='Impulse Response', line_width=2)
 
     return plot
@@ -35,7 +35,7 @@ def dc_charging_plot(capacitance):
     y = [capacitance * val for val in x]
 
     # Create the plot
-    plot = figure(title='DC Charging', x_axis_label='Time', y_axis_label='Charge')
+    plot = figure(title='DC Charging', x_axis_label='Time', y_axis_label='Charge', plot_width=1200, plot_height=740)
     plot.line(x, y, legend_label='DC Charging', line_width=2)
 
     return plot
