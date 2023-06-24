@@ -9,37 +9,61 @@ from bokeh.models import HoverTool
 from PlateCapacitor import PlateCapacitor
 
 
-def dc_discharging_plot(capacitance, resistance, initial_voltage):
-    # Discharging of a capacitor through a resistor follows an exponential decay
+def dc_discharging_plot(capacitance, resistance, initial_voltage, plot_type):
     t = np.linspace(0, 5, num=5000)  # Time values
-    v = initial_voltage * np.exp(-t / (resistance * capacitance))  # Voltage values
 
-    plot = figure(title='DC Discharging', x_axis_label='Time (s)', y_axis_label='Voltage (V)', plot_width=1200, plot_height=790)
-    line = plot.line(t, v, legend_label='DC Discharging', line_width=2)
+    if plot_type == "Voltage/Time":
+        y = initial_voltage * np.exp(-t / (resistance * capacitance))  # Voltage values
+        y_label = 'Voltage (V)'
+    elif plot_type == "Current/Time":
+        # Current values follow an exponential decay
+        y = (initial_voltage / resistance) * np.exp(-t / (resistance * capacitance))  # Current values
+        y_label = 'Current (A)'
+    elif plot_type == "Charge/Time":
+        # The charge in the capacitor as a function of time during discharge
+        y = initial_voltage * capacitance * np.exp(-t / (resistance * capacitance))  # Charge values
+        y_label = 'Charge (C)'
+    else:
+        raise ValueError(f'Unknown plot type: {plot_type}')
+
+    plot = figure(title='DC Discharging', x_axis_label='Time (s)', y_axis_label=y_label, plot_width=1200, plot_height=790)
+    line = plot.line(t, y, legend_label='DC Discharging', line_width=2)
 
     # Add hover tool to display values
-    hover = HoverTool(renderers=[line], tooltips=[('Time', '@x'), ('Voltage', '@y')])
+    hover = HoverTool(renderers=[line], tooltips=[('Time', '@x'), (y_label, '@y')])
     # Add the hover tool to the plot
     plot.add_tools(hover)
     return plot
 
-def dc_charging_plot(capacitance):
-    # Generate x and y values for the plot
-    # This is where you would use the equations for your simulation
+def dc_charging_plot(capacitance, resistance, initial_voltage, plot_type):
+
     x = list(range(100))
-    y = [capacitance * val for val in x]
+    if plot_type == "Charge/Time":
+        y = [capacitance * val for val in x]
+        y_label = 'Charge'
+    elif plot_type == "Current/Time":
+        # Calculate current values based on your simulation
+        y = [(initial_voltage / resistance) * np.exp(-val / (resistance * capacitance)) for val in x]
+        y_label = 'Current'
+    elif plot_type == "Voltage/Time":
+        # Calculate voltage values based on your simulation
+        y = [initial_voltage * (1 - np.exp(-val / (resistance * capacitance))) for val in x]
+        y_label = 'Voltage'
+    else:
+        raise ValueError(f'Unknown plot type: {plot_type}')
 
     # Create the plot
-    plot = figure(title='DC Charging', x_axis_label='Time', y_axis_label='Charge', plot_width=1200, plot_height=790)
+    plot = figure(title='DC Charging', x_axis_label='Time', y_axis_label=y_label, plot_width=1200, plot_height=790)
     line = plot.line(x, y, legend_label='DC Charging', line_width=2)
 
     # Add hover tool to display values
-    hover = HoverTool(renderers=[line], tooltips=[('Time', '@x'), ('Charge', '@y')])
+    hover = HoverTool(renderers=[line], tooltips=[('Time', '@x'), (y_label, '@y')])
 
     # Add the hover tool to the plot
     plot.add_tools(hover)
 
     return plot
+
 
 
 
@@ -64,19 +88,22 @@ def index():
         'permittivity': '',
         'resistance': '',
         'initial_voltage': '',
-        'simulation_type': 'DC Charging'  # Set the default simulation type
+        'simulation_type': 'DC Charging',  # Set the default simulation type
+        'plot_type': 'Current/Time'  # Set the default plot type
     }
 
     plot_script = plot_div = None
     capacitance_output = None
 
     if request.method == 'POST':
+        # Process the form submission
         area = request.form.get('area')
         separation = request.form.get('separation')
         permittivity = request.form.get('permittivity')
         resistance = request.form.get('resistance')
         initial_voltage = request.form.get('initial_voltage')
         simulation_type = request.form.get('simulation_type')
+        plot_type = request.form.get('plot_type')
 
         # Update the form values dictionary with the submitted values
         form_values.update({
@@ -85,14 +112,15 @@ def index():
             'permittivity': permittivity,
             'resistance': resistance,
             'initial_voltage': initial_voltage,
-            'simulation_type': simulation_type
+            'simulation_type': simulation_type,
+            'plot_type': plot_type
         })
 
         # Check that all form values are filled
-        if not all([area, separation, permittivity, resistance, initial_voltage, simulation_type]):
+        if not all([area, separation, permittivity, resistance, initial_voltage, simulation_type, plot_type]):
             return 'Please fill all form fields', 400
 
-        # Convert form values to floats
+        # Convert form values to appropriate types
         area = float(area)
         separation = float(separation)
         permittivity = float(permittivity)
@@ -101,23 +129,25 @@ def index():
 
         capacitor = PlateCapacitor(area, separation)
         capacitance = capacitor.capacitance(permittivity)
-        # Update the capacitance output
-        capacitance_output = update_capacitance()
+        capacitance_output = format_capacitance(capacitance)
 
         # Depending on the simulation type, generate the corresponding plot
         if simulation_type == 'DC Charging':
-            plot = dc_charging_plot(capacitance)
+            plot = dc_charging_plot(capacitance, resistance, initial_voltage, plot_type)
         elif simulation_type == 'DC Discharging':
-            plot = dc_discharging_plot(capacitance, resistance, initial_voltage)
+            plot = dc_discharging_plot(capacitance, resistance, initial_voltage, plot_type)
         else:
             raise ValueError(f'Unknown simulation type: {simulation_type}')
 
         # Embed plot into HTML
         plot_script, plot_div = components(plot)
 
-        # Pass the form values dictionary to the template
+    # Render the template with the updated values
     return render_template('index.html', plot_script=plot_script, plot_div=plot_div,
                            capacitance_output=capacitance_output, form_values=form_values)
+
+
+
 
 @app.route('/update_capacitance', methods=['POST'])
 def update_capacitance():
@@ -128,7 +158,9 @@ def update_capacitance():
     capacitor = PlateCapacitor(area, separation)
     capacitance = capacitor.capacitance(permittivity)
 
+    # Return only the capacitance value, not the entire response
     return jsonify(capacitance=format_capacitance(capacitance))
+
 
 
 if __name__ == '__main__':

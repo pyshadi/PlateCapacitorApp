@@ -95,7 +95,7 @@
                 permittivity: $('input[name="permittivity"]').val(),
             },
             success: function(response) {
-                $('span#capacitance').text(response['capacitance']);
+                $('#capacitance').text(response.capacitance);  // Update the text content of the element with ID 'capacitance'
             }
         });
     });
@@ -124,6 +124,12 @@
     <select id="simulation_type" name="simulation_type">
         <option value="DC Charging" {% if form_values.simulation_type == 'DC Charging' %} selected {% endif %}>DC Charging</option>
         <option value="DC Discharging" {% if form_values.simulation_type == 'DC Discharging' %} selected {% endif %}>DC Discharging</option>
+    </select><br><br>
+    <label for="plot_type">Plot Type:</label><br>
+    <select id="plot_type" name="plot_type">
+        <option value="Current/Time" {% if form_values.plot_type == 'Current/Time' %} selected {% endif %}>Current/Time</option>
+        <option value="Voltage/Time" {% if form_values.plot_type == 'Voltage/Time' %} selected {% endif %}>Voltage/Time</option>
+        <option value="Charge/Time" {% if form_values.plot_type == 'Charge/Time' %} selected {% endif %}>Charge/Time</option>
     </select><br><br>
 
     <label for="resistance">Resistance:</label><br>
