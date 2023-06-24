@@ -74,7 +74,6 @@
     }
 </style>
 
-
     <!-- Include BokehJS from CDN -->
     <script src="https://cdn.bokeh.org/bokeh/release/bokeh-2.4.2.min.js"></script>
     <script src="https://cdn.bokeh.org/bokeh/release/bokeh-widgets-2.4.2.min.js"></script>
@@ -85,7 +84,7 @@
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-$(document).ready(function() {
+    $(document).ready(function() {
     $('input[name="area"], input[name="separation"], input[name="permittivity"]').on('change', function() {
         $.ajax({
             url: '/update_capacitance',
@@ -101,7 +100,7 @@ $(document).ready(function() {
         });
     });
 });
-</script>
+    </script>
 
 
 </head>
@@ -125,7 +124,6 @@ $(document).ready(function() {
     <select id="simulation_type" name="simulation_type">
         <option value="DC Charging" {% if form_values.simulation_type == 'DC Charging' %} selected {% endif %}>DC Charging</option>
         <option value="DC Discharging" {% if form_values.simulation_type == 'DC Discharging' %} selected {% endif %}>DC Discharging</option>
-        <option value="Impulse Response" {% if form_values.simulation_type == 'Impulse Response' %} selected {% endif %}>Impulse Response</option>
     </select><br><br>
 
     <label for="resistance">Resistance:</label><br>

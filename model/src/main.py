@@ -23,20 +23,6 @@ def dc_discharging_plot(capacitance, resistance, initial_voltage):
     plot.add_tools(hover)
     return plot
 
-def impulse_response_plot(capacitance, resistance):
-    # In a RC circuit, the impulse response is an exponential decay
-    t = np.linspace(0, 5, num=5000)  # Time values
-    v = np.exp(-t / (resistance * capacitance))  # Voltage values
-
-    plot = figure(title='Impulse Response', x_axis_label='Time (s)', y_axis_label='Voltage (V)', plot_width=1200, plot_height=790)
-    line =plot.line(t, v, legend_label='Impulse Response', line_width=2)
-    # Add hover tool to display values
-    hover = HoverTool(renderers=[line], tooltips=[('Time', '@x'), ('Charge', '@y')])
-    # Add the hover tool to the plot
-    plot.add_tools(hover)
-    return plot
-
-
 def dc_charging_plot(capacitance):
     # Generate x and y values for the plot
     # This is where you would use the equations for your simulation
@@ -123,8 +109,6 @@ def index():
             plot = dc_charging_plot(capacitance)
         elif simulation_type == 'DC Discharging':
             plot = dc_discharging_plot(capacitance, resistance, initial_voltage)
-        elif simulation_type == 'Impulse Response':
-            plot = impulse_response_plot(capacitance, resistance)
         else:
             raise ValueError(f'Unknown simulation type: {simulation_type}')
 
