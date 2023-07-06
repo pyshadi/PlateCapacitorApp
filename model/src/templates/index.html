@@ -10,6 +10,13 @@
         padding: 0;
         background-color: #f8f9fa;
     }
+    h1 {
+        text-align: left;
+        color: #333;
+        font-family: Arial, sans-serif;
+        font-size: 28px;
+        margin-top: 20px;
+    }
 
     .container {
         display: flex;
@@ -79,6 +86,22 @@
             margin-top: 0;
         }
     }
+
+        @keyframes chargeAnimation {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.2); opacity: 0.8; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .charge {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            background-color: #0056b3;
+            border-radius: 50%;
+            animation: chargeAnimation 1s ease-in-out infinite;
+        }
+
     </style>
 
     <!-- Include BokehJS from CDN -->
@@ -112,22 +135,28 @@
 
 </head>
 <body>
+
+    <div class="container">
+        <h1>Capacitance Calculation and Analysis</h1>
+        <span class="charge"></span>
+    </div>
+
     <div class="container">
 
         <form method="POST">
-            <label for="area">Area [m]:</label>
+            <label for="area">Area [m2]</label>
             <input type="text" name="area" value="{{ form_values.area }}" placeholder="Area">
 
-            <label for="separation">Separation [m]:</label>
+            <label for="separation">Separation [m]</label>
             <input type="text" name="separation" value="{{ form_values.separation }}" placeholder="Separation">
 
-            <label for="permittivity">Permittivity [F/m]:</label>
+            <label for="permittivity">Permittivity [F/m]</label>
             <input type="text" name="permittivity" value="{{ form_values.permittivity }}" placeholder="Permittivity">
 
             <span id="capacitance">{{ capacitance_output }}</span>
             <br><br><br>
 
-            <label for="simulation_type">Simulation Type:</label>
+            <label for="simulation_type">Simulation Type</label>
             <select id="simulation_type" name="simulation_type">
                 <option value="DC Charging" {% if form_values.simulation_type == 'DC Charging' %} selected {% endif %}>DC Charging</option>
                 <option value="DC Discharging" {% if form_values.simulation_type == 'DC Discharging' %} selected {% endif %}>DC Discharging</option>
@@ -140,10 +169,10 @@
                 <option value="Charge/Time" {% if form_values.plot_type == 'Charge/Time' %} selected {% endif %}>Charge/Time</option>
             </select>
 
-            <label for="resistance">Resistance:</label>
+            <label for="resistance">Resistance [Ω]</label>
             <input type="text" id="resistance" name="resistance" value="{{ form_values.resistance }}">
 
-            <label for="initial_voltage">Initial Voltage:</label>
+            <label for="initial_voltage">Initial Voltage [V]</label>
             <input type="text" id="initial_voltage" name="initial_voltage" value="{{ form_values.initial_voltage }}"><br><br>
 
             <input type="submit" value="Submit">
