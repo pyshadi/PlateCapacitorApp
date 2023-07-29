@@ -2,16 +2,13 @@
 from flask import Flask, render_template, request, jsonify
 from bokeh.embed import components
 import numpy as np
-
 from bokeh.plotting import figure
 from bokeh.models import HoverTool
-
 from PlateCapacitor import PlateCapacitor
 
 
 def dc_discharging_plot(capacitance, resistance, initial_voltage, plot_type):
     t = np.linspace(0, 5, num=5000)  # Time values
-
     if plot_type == "Voltage/Time":
         y = initial_voltage * np.exp(-t / (resistance * capacitance))  # Voltage values
         y_label = 'Voltage (V)'
@@ -29,9 +26,8 @@ def dc_discharging_plot(capacitance, resistance, initial_voltage, plot_type):
     plot = figure(title='DC Discharging', x_axis_label='Time (s)', y_axis_label=y_label, plot_width=1200, plot_height=615)
     line = plot.line(t, y, legend_label='DC Discharging', line_width=2)
 
-    # Add hover tool to display values
+    # Add hover tool
     hover = HoverTool(renderers=[line], tooltips=[('Time', '@x'), (y_label, '@y')])
-    # Add the hover tool to the plot
     plot.add_tools(hover)
     return plot
 
@@ -42,11 +38,11 @@ def dc_charging_plot(capacitance, resistance, initial_voltage, plot_type):
         y = [capacitance * val for val in x]
         y_label = 'Charge'
     elif plot_type == "Current/Time":
-        # Calculate current values based on your simulation
+        # Calculate current values based on simulation
         y = [(initial_voltage / resistance) * np.exp(-val / (resistance * capacitance)) for val in x]
         y_label = 'Current'
     elif plot_type == "Voltage/Time":
-        # Calculate voltage values based on your simulation
+        # Calculate voltage values based on simulation
         y = [initial_voltage * (1 - np.exp(-val / (resistance * capacitance))) for val in x]
         y_label = 'Voltage'
     else:
@@ -56,16 +52,10 @@ def dc_charging_plot(capacitance, resistance, initial_voltage, plot_type):
     plot = figure(title='DC Charging', x_axis_label='Time', y_axis_label=y_label, plot_width=1200, plot_height=615)
     line = plot.line(x, y, legend_label='DC Charging', line_width=2)
 
-    # Add hover tool to display values
+    # Add the hover tool
     hover = HoverTool(renderers=[line], tooltips=[('Time', '@x'), (y_label, '@y')])
-
-    # Add the hover tool to the plot
     plot.add_tools(hover)
-
     return plot
-
-
-
 
 
 def format_capacitance(capacitance):
@@ -74,7 +64,6 @@ def format_capacitance(capacitance):
     while capacitance < 1 and unit_index < len(units) - 1:
         capacitance *= 1000
         unit_index += 1
-
     return f"Capacitance: {capacitance:.2f} {units[unit_index]}"
 
 app = Flask(__name__)
